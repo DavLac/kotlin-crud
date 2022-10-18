@@ -1,0 +1,6 @@
+
+# Show error message when throwing exceptions
+server:
+  error:
+    include-message: always
+    include-binding-errors: always

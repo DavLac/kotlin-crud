@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 class EntityController {
 
     @GetMapping("/{id}")
-    fun getEntity(@PathVariable id: Int): Entity? = Repository.entitiesRepository[id]
+    fun getEntity(@PathVariable id: Int): Entity? = Repository.getEntity(id)
 
     @GetMapping
     fun getAllEntities(): HashMap<Int, Entity> = Repository.entitiesRepository
@@ -36,9 +36,16 @@ class EntityController {
             return entity
         }
 
+        fun getEntity(id: Int): Entity?{
+            if(!entitiesRepository.containsKey(id)) {
+                throw NotFoundException(String.format("Entity with ID='%d' not found", id))
+            }
+            return entitiesRepository[id]
+        }
+
         fun updateEntity(entity: Entity, id: Int): Entity{
             if(!entitiesRepository.containsKey(id)) {
-                throw RuntimeException(String.format("Entity with ID='%d' not found", id))
+                throw NotFoundException(String.format("Entity with ID='%d' not found", id))
             }
             entitiesRepository[id] = entity
             return entity
@@ -46,7 +53,7 @@ class EntityController {
 
         fun deleteEntity(id: Int) {
             if(!entitiesRepository.containsKey(id)) {
-                throw RuntimeException(String.format("Entity with ID='%d' not found", id))
+                throw NotFoundException(String.format("Entity with ID='%d' not found", id))
             }
             entitiesRepository.remove(id)
         }
